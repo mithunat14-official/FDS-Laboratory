@@ -1,0 +1,119 @@
+import pandas as pd
+df = pd.DataFrame({
+    'ID': ['1', '2', '3', '4', '5'],
+    'Name': ['CS', 'SE', 'SE', 'SE', 'CS'],
+    'Department': ['cse', 'eee', 'ece','it', 'AI'],
+    'Year': ['3', '2', '1', '4', '1'],
+    'Subject_Marks':[72,73,72,72,73]
+})
+display(df)
+dataMatrix = {"Subject_Marks":[72, 73, 72, 72, 73],};
+dataFrame = pd.DataFrame(data=dataMatrix);
+print("DataFrame:");
+print(dataFrame);
+print("Mean:Computed column-wise:");
+meanData = dataFrame.mean();                #Mean
+print(meanData);
+print("Mean:Computed row-wise:");
+meanData = dataFrame.mean(axis=1);
+print(meanData);
+print("Median:Computed column-wise:")
+medianData = dataFrame.median();         #Median
+print(medianData);
+print("Median:Computed row-wise:");
+medianData = dataFrame.median(axis=1);
+print(medianData);
+print("Mode:Computed column-wise:");
+modeData = dataFrame.mode();              #Mode
+print(modeData);
+print("Mode:Computed row-wise:");
+modeData = dataFrame.mode(axis=1);
+print(modeData);
+ 
+DataFrame:
+   Subject_Marks
+0             72
+1             73
+2             72
+3             72
+4             73
+Mean:Computed column-wise:
+Subject_Marks    72.4
+dtype: float64
+Mean:Computed row-wise:
+0    72.0
+1    73.0
+2    72.0
+3    72.0
+4    73.0
+dtype: float64
+Median:Computed column-wise:
+Subject_Marks    72.0
+dtype: float64
+Median:Computed row-wise:
+0    72.0
+1    73.0
+2    72.0
+3    72.0
+4    73.0
+dtype: float64
+Mode:Computed column-wise:
+   Subject_Marks
+0             72
+Mode:Computed row-wise:
+    0
+0  72
+1  73
+2  72
+3  72
+4  73
+
+CALCULATION OF MEASURES OF  VARIABILITY FOR THE GIVEN DATA
+
+SOURCE CODE
+import pandas as pd
+import numpy as np
+import statistics as st 
+
+# Load the data
+df = pd.DataFrame({
+    'ID': ['1', '2', '3', '4', '5'],
+    'Name': ['CS', 'SE', 'SE', 'SE', 'CS'],
+    'Department': ['cse', 'eee', 'ece','it', 'AI'],
+    'Year': ['3', '2', '1', '4', '1'],
+    'Subject_Marks':[72,73,72,72,73]
+})
+display(df)
+print(df.shape)
+print(df.info())
+df
+dataMatrix = {"Subject_Marks":[72, 73, 72, 72, 73]};
+dataFrame = pd.DataFrame(data=dataMatrix);
+pd.range(start=72, end=73, periods=2)       #range
+print(dataFrame.std())                                # Standard Deviation                          
+print(dataFrame.var())                               # Variance
+from scipy.stats import iqr
+print(iqr(dataFrame['Subject_Marks']))    #  Interquartile Range
+dataFrame.describe(include='all')
+
+ 
+(5, 5)
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 5 entries, 0 to 4
+Data columns (total 5 columns):
+ #   Column         Non-Null Count  Dtype 
+---  ------         --------------  ----- 
+ 0   ID             5 non-null      object
+ 1   Name           5 non-null      object
+ 2   Department     5 non-null      object
+ 3   Year           5 non-null      object
+ 4   Subject_Marks  5 non-null      int64 
+dtypes: int64(1), object(4)
+memory usage: 188.0+ bytes
+None
+[72,73]
+Subject_Marks    0.547723
+dtype: float64
+Subject_Marks    0.3
+dtype: float64
+1.0
