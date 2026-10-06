@@ -1,0 +1,123 @@
+(i) Using isnull() -> Team column is checked for NULL values and a boolean series is returned by the isnull() method which stores True for ever NaN value and False for a Not null value.
+# importing pandas package
+import pandas as pd
+# making data frame from csv file
+data = pd.read_csv("employees.csv")
+# creating bool series True for NaN values
+bool_series = pd.isnull(data["Team"])
+# filtering data
+# displaying data only with team = NaN
+data[bool_series]
+
+(ii) Using notnull()
+In the following example, Gender column is checked for NULL values and a boolean series is returned by the notnull() method which stores True for ever NON-NULL value and False for a null value.
+# importing pandas package
+import pandas as pd
+# making data frame from csv file
+data = pd.read_csv("employees.csv")
+# creating bool series False for NaN values
+bool_series = pd.notnull(data["Gender"])
+# displayed data only with team = NaN
+data[bool_series]
+
+(iii) Dropping Rows with at least 1 null value in CSV file.
+nba.csv file link : https://drive.google.com/open?id=1Uzdua5o61cfXMz1K16NNcwLFqG91J6W4 
+# importing pandas module
+import pandas as pd	
+# making data frame from csv file
+data = pd.read_csv("employees.csv")	
+# making new data frame with dropped NA values
+new_data = data.dropna(axis = 0, how ='any')
+new_data
+
+(iv) Replacing NaN values with a Static value.
+# importing pandas module
+import pandas as pd
+# making data frame from csv file
+nba = pd.read_csv("nba.csv")
+nba
+ 
+# importing pandas module
+import pandas as pd
+# making data frame from csv file
+nba = pd.read_csv("nba.csv")
+# replacing na values in college with No college
+nba["College"].fillna("No College", inplace = True)
+nba
+ 
+(i) apply()
+stock.csv->https://www.kaggle.com/datasets/jacksoncrow/stock-market       dataset/download?datasetVersionNumber=2  
+import pandas as pd
+# reading csv
+s = pd.read_csv("stock.csv", squeeze = True)
+# defining function to check price
+def fun(num):
+	if num<200:
+		return "Low"
+	elif num>= 200 and num<400:
+		return "Normal"
+	else:
+		return "High"
+# passing function to apply and storing returned series in new
+new = s.apply(fun)
+# printing first 3 element
+print(new.head(3))
+# printing elements somewhere near the middle of series
+print(new[1400], new[1500], new[1600])
+# printing last 3 elements
+print(new.tail(3))
+ 
+(ii) map()
+pokemon.csv-> https://www.kaggle.com/datasets/rounakbanik/pokemon/download?datasetVersionNumber=1 
+import pandas as pd
+#reading csv files
+pokemon_names = pd.read_csv("pokemon.csv", usecols = ["Pokemon"], squeeze = True)
+#usecol is used to use selected columns
+#index_col is used to make passed column as index
+pokemon_types = pd.read_csv("pokemon.csv", index_col = "Pokemon",squeeze = True)
+#using pandas map function
+new=pokemon_names.map(pokemon_types)
+print (new)
+ 
+
+c) Detect and filter outliers
+uber.csv->https://www.kaggle.com/yasserh/uber-fares-dataset?select=uber.csv
+#import dependencies
+import pandas as pd
+import numpy as np
+import plotly.express as px
+ 
+#load the data into a dataframe
+df = pd.read_csv(‘uber.csv’)
+#check the first 5 rows
+df.head()
+ 
+#drop the unnecessary columns
+df = df.drop(columns=([‘pickup_longitude’, ‘pickup_latitude’, ‘dropoff_longitude’, ‘dropoff_latitude’]))
+ 
+After checking the data and dropping the columns, use .describe() to generate some summary statistics. Generating summary statistics is a quick way to help us determine whether or not the dataset has outliers. 
+df.describe()[[‘fare_amount’, ‘passenger_count’]]
+df.describe()
+ 
+
+d) Perform Vectorized String operations on Pandas Series
+Python's built-in string methods are mirrored by a Pandas vectorized string method. 
+# importing pandas package
+import pandas as pd
+# making data frame from csv file
+data = pd.read_csv("employees.csv")
+# converting and overwriting values in column
+data["Team"]= data["Team"].str.upper()
+# display
+data
+ 
+
+# importing pandas package
+import pandas as pd
+# making data frame from csv file
+data = pd.read_csv("employees.csv")
+# converting and overwriting values in column
+data["First Name"]= data["First Name"].str.lower()
+# display
+data
+ 
