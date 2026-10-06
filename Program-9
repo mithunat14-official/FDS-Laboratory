@@ -1,0 +1,194 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import sklearn
+import io
+import requests
+# assign the csv file link to a variable
+dataURL = "http://www.ats.ucla.edu/stat/data/binary.csv"
+
+# use requests to get the content of the csv file
+getCSV  = requests.get(dataURL).content
+
+# use pandas i/o to get the dataset
+dataset = pd.read_csv(io.StringIO(getCSV.decode('utf-8')))
+
+# get the data type of dataset
+print(type(dataset))
+<class 'pandas.core.frame.DataFrame'>
+
+# look into the first five rows of the dataset
+print(dataset.head())
+   admit  gre   gpa  rank
+0      0  380  3.61     3
+1      1  660  3.67     3
+2      1  800  4.00     1
+3      1  640  3.19     4
+4      0  520  2.93     4
+
+# get the shape of dataset - {rows,columns}
+print(dataset.shape)
+(400, 4)
+
+# get some information about the dataset
+print(dataset.info())
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 400 entries, 0 to 399
+Data columns (total 4 columns):
+admit    400 non-null int64
+gre      400 non-null int64
+gpa      400 non-null float64
+rank     400 non-null int64
+dtypes: float64(1), int64(3)
+memory usage: 12.5 KB
+None
+
+# count the number of non-NA values in the dataset
+print(dataset.count())
+admit    400
+gre      400
+gpa      400
+rank     400
+dtype: int64
+
+# get info about the columns/attributes of the dataset
+print(dataset.columns)
+Index([u'admit', u'gre', u'gpa', u'rank'], dtype='object')
+
+# seaborn and matplotlib are great libraries for Data Visualization
+import seaborn as sns
+sns.set(style="white", context="talk")
+
+# two plots as subplots
+f, (ax1, ax2) = plt.subplots(1, 2, figsize=(10,6))
+
+# plot GRE scores
+sns.distplot(dataset.ix[:,1],  ax=ax1, color="r");
+
+# plot GPA grades
+sns.distplot(dataset.ix[:,2],  ax=ax2, color="g");
+
+# display the plot
+sns.plt.show()
+ 
+In the above two plots, we could see that GRE score mostly fall within the range (400-700) and GPA grade mostly fall within the range (3-4). This could not be guessed just by looking at the raw csv file. 
+# multivariate analysis
+sns.pairplot(dataset, hue='admit', palette="husl",
+            x_vars=["gre", "gpa", "rank"],
+            y_vars=["gre", "gpa", "rank"], size=4)
+
+# display the plot
+sns.plt.show()
+ 
+
+# convert the dataframe into a matrix
+dataArray = dataset.values
+# split the input features and output variable
+X = dataArray[:,1:4]
+y = dataArray[:,0:1]
+
+# split training and testing dataset
+validation_size = 0.10
+seed = 9
+X_train, X_test, Y_train, Y_test = train_test_split(X, y, test_size=validation_size, random_state=seed)
+print(X_train.shape)
+print(X_test.shape)
+print(Y_train.shape)
+print(Y_test.shape)
+(360, 3)
+(40, 3)
+(360, 1)
+(40, 1)
+# prepare the models - {LR, LDA, KNN, CART, RF, NB, SVM}
+num_trees = 200
+max_features = 3
+models = []
+models.append(('LR', LogisticRegression()))
+models.append(('LDA', LinearDiscriminantAnalysis()))
+models.append(('KNN', KNeighborsClassifier()))
+models.append(('CART', DecisionTreeClassifier()))
+models.append(('RF', RandomForestClassifier(n_estimators=num_trees, max_features=max_features)))
+models.append(('NB', GaussianNB()))
+models.append(('SVM', SVC()))
+# fit the models and evaluate it
+results = []
+names = []
+scoring = 'accuracy'
+
+# evaluate each model using 10-FOLD cross validation
+for name, model in models:
+    kfold = KFold(n_splits=10, random_state=7)
+    cv_results = cross_val_score(model, X_train, Y_train, cv=kfold, scoring=scoring)
+    results.append(cv_results)
+    names.append(name)
+    msg = "%s: %f (%f)" % (name, cv_results.mean(), cv_results.std())
+    print(msg)
+LR: 0.694444 (0.087841)
+LDA: 0.700000 (0.088541)
+KNN: 0.658333 (0.079592)
+CART: 0.636111 (0.060157)
+RF: 0.677778 (0.041574)
+NB: 0.688889 (0.088541)
+SVM: 0.658333 (0.093830)
+ On evaluating all the models, we find that LDA achieves a training accuracy of 70%. This accuracy is pretty much good as our dataset is highly correlated. But, to make predictions on new data, we need to make predictions using any of the models on the test data.
+# boxplots for ML algorithm comparison
+fig = pyplot.figure()
+fig.suptitle('Machine Learning algorithms comparison')
+ax = fig.add_subplot(111)
+pyplot.boxplot(results)
+ax.set_xticklabels(names)
+pyplot.show()
+ 
+# create the model
+model = LogisticRegression()
+# fit the model
+model.fit(X_train, Y_train)
+# make predictions on the test data
+predictions = model.predict(X_test)
+
+# compute the overall accuracy and display the classification report
+print("Model --> Logistic Regression")
+print("Overall Accuracy: {}").format(accuracy_score(Y_test, predictions) * 100)
+print(classification_report(Y_test, predictions))
+Model --> Logistic Regression
+Overall Accuracy: 77.5
+             precision    recall  f1-score   support
+
+        0.0       0.81      0.94      0.87        31
+        1.0       0.50      0.22      0.31         9
+
+avg / total       0.74      0.78      0.74        40
+
+We have created and trained Logistic Regression model on the training data and made predictions on the test data. We get an overall accuracy of 77.5%. Finally, to plot the confusion matrix, we make use of seaborn's heatmap.
+# plot confusion matrix and display the heatmap
+%matplotlib inline
+cm = confusion_matrix(Y_test, predictions)
+sns.heatmap(cm, 
+            annot=True, 
+            xticklabels=['reject', 'admit'], 
+            yticklabels=['reject', 'admit'])
+plt.figure(figsize=(3,3))
+sns.plt.show()
+ 
+<matplotlib.figure.Figure at 0x19dd3990>
+# make prediction on a new test data - (gre_score, gpa_grade, rank)
+new_data = [(720, 4, 1), (300, 2, 1), (400, 4, 4)]
+
+# convert the list of tuples to numpy array
+new_array = np.asarray(new_data)
+
+# the output labels
+labels = ["reject", "admit"]
+
+# make prediction
+prediction = model.predict(new_array)
+
+# get the no.of.test cases used
+no_of_test_cases, cols = new_array.shape
+# show the result
+for i in range(no_of_test_cases):
+print("Status of STUDENT with GRE score= {}, GPA grade= {}, Rank= {} will be --> {}".format(new_data[i][0], new_data[i][1], new_data[i][2], labels[int(prediction[i])]))
+Status of STUDENT with GRE score= 720, GPA grade= 4, Rank= 1 will be --> admit
+Status of STUDENT with GRE score= 300, GPA grade= 2, Rank= 1 will be --> reject
+Status of STUDENT with GRE score= 400, GPA grade= 4, Rank= 4 will be --> reject
+
