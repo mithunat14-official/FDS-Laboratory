@@ -1,0 +1,54 @@
+a.) Plot the correlation plot on dataset and visualize giving an overview of relationships among data on iris   data
+import pandas as pd
+# Reading the CSV file
+df = pd.read_csv("Iris.csv")
+# Printing top 5 rows
+df.head()
+
+df.shape
+(150, 6)
+df.isnull().sum()
+
+data = df.drop_duplicates(subset ="Species",)
+data
+
+df.value_counts("Species")
+ 
+# importing packages
+import seaborn as sns
+import matplotlib.pyplot as plt
+sns.countplot(x='Species', data=df, )
+plt.show()
+
+ 
+
+
+b)  Find the correlation matrix
+Pandas dataframe.corr() is used to find the pairwise correlation of all columns in the dataframe. Any NA values are automatically excluded. For any non-numeric data type columns in the dataframe it is ignored.
+data.corr(method='pearson')
+
+# import correlation matrix to see parametrs which best correlate each other
+# According to the correlation matrix results PetalLengthCm and PetalWidthCm have possitive correlation 
+import seaborn as sns
+corr = dataframe.corr()
+sns.heatmap(corr, 
+            xticklabels=corr.columns.values,
+            yticklabels=corr.columns.values)
+sns.plt.show()
+
+c.	Analysis of covariance: variance (ANOVA), if data have categorical variables on iris data
+ANOVA test: Analysis of variance(ANOVA) is a statistical technique that is used to check if means of two or more groups are statistically different from each other. Consider a group of three samples means for sepal_width_cm from the iris dataset. Our goal is to determine that each group's mean value are statistically different from the other's and to do this we need to evaluate the variability between each of the mean values.
+print(dataframe_iris_new['sepalWidth'].groupby(dataframe_iris_new['target']).mean())
+target
+0    3.428
+1    2.770
+2    2.974
+Name: sepalWidth, dtype: float64
+dataframe_iris_new.mean()
+sepalLength     5.843333
+sepalWidth      3.057333
+petalLength     3.758000
+petalWidth      1.199333
+target          1.000000
+ID             74.500000
+dtype: float64
